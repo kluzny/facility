@@ -130,6 +130,37 @@ At the bottom of SKILL.md, link out to the detailed reference docs rather than i
 
 ---
 
+## Skill types: reference vs. task
+
+Skills fall into two broad types. Knowing the type determines which frontmatter fields to reach for.
+
+**Reference skills** add knowledge or tool access Claude uses on its own. Claude loads them automatically when your conversation matches the description.
+
+```yaml
+---
+description: Work with Shortcut stories and epics via the short CLI.
+when_to_use: Triggered when the user mentions Shortcut, stories, epics, or iterations.
+allowed-tools: Bash(short *)
+---
+```
+
+**Task skills** describe a specific workflow the user explicitly triggers — commits, PR drafts, deploys. Add `disable-model-invocation: true` to prevent Claude from running them automatically, and to keep their description out of Claude's context until invoked.
+
+```yaml
+---
+description: Draft and apply a pull request description from the current branch.
+disable-model-invocation: true
+allowed-tools: Bash(git *) Bash(gh *)
+---
+```
+
+Task skills should always:
+- Show the **complete proposed output** (commit message, PR body, etc.) before taking any write action
+- Wait for explicit user confirmation before running mutations (`git commit`, `gh pr edit`, etc.)
+- Ask before staging or modifying anything the user hasn't explicitly touched
+
+---
+
 ## Patterns from the shortcut skill
 
 The [`skills/shortcut/`](../../skills/shortcut/) skill is the canonical example. Key decisions made there:
