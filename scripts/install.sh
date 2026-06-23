@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # Symlink Claude skills from ./skills/ into ~/.claude/skills/
 # Usage:
-#   ./scripts/install.sh [--dry-run] [skill ...]
+#   ./scripts/install.sh [--dry-run] [--skill=name|all]
 #
-#   --dry-run   show what would be linked without making changes
-#   skill ...   install only the named skill(s); default: all
+# If --skill is omitted, installs all skills.
 
 set -euo pipefail
 
@@ -13,10 +12,22 @@ SKILLS_SRC="$REPO_ROOT/skills"
 SKILLS_DEST="$HOME/.claude/skills"
 
 DRY_RUN=false
-if [[ "${1:-}" == "--dry-run" ]]; then
-  DRY_RUN=true
-  shift
-fi
+SKILL_TARGETS=()
+
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run)
+      DRY_RUN=true
+      ;;
+    --skill=*)
+      SKILL_TARGETS+=("${arg#--skill=}")
+      ;;
+    *)
+      echo "Unknown argument: $arg" >&2
+      exit 1
+      ;;
+  esac
+done
 
 run() {
   if $DRY_RUN; then
@@ -48,12 +59,21 @@ link_skill() {
   fi
 }
 
-if [[ $# -gt 0 ]]; then
-  for skill in "$@"; do
-    link_skill "$skill"
-  done
-else
+install_all_skills() {
   for src in "$SKILLS_SRC"/*/; do
-    link_skill "$(basename "$src")"
+    if [[ -d "$src" ]]; then link_skill "$(basename "$src")"; fi
   done
+}
+
+if [[ ${#SKILL_TARGETS[@]} -eq 0 ]]; then
+  install_all_skills
+  exit 0
 fi
+
+for target in "${SKILL_TARGETS[@]}"; do
+  if [[ "$target" == "all" ]]; then
+    install_all_skills
+  else
+    link_skill "$target"
+  fi
+done
