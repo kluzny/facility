@@ -44,6 +44,7 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
+| [acli](skills/acli/) | `/acli` | Work with Jira and Atlassian Cloud via the `acli` CLI |
 
 ### commit
 
@@ -132,6 +133,26 @@ glab auth login
 - Raw REST API access via `glab api`
 
 Detailed flag reference is in [`skills/glab/references/`](skills/glab/references/).
+
+### acli
+
+Integrates with the [Atlassian CLI](https://atlassian.github.io/atlascode/) (`acli`) to let Claude create, search, view, edit, and transition Jira work items, and manage Jira projects, boards, sprints, and filters.
+
+**Prerequisite:**
+```bash
+# Install acli (see https://atlassian.github.io/atlascode/ for platform-specific instructions)
+acli jira auth login --web
+```
+
+**What it covers:**
+- Search work items via JQL queries
+- View, create, edit, and transition work items (bugs, tasks, stories, epics)
+- Assign work items and manage comments
+- List and manage projects, boards, sprints, filters, and dashboards
+- Bulk operations via JQL, filter ID, or key list
+- Administer Atlassian org users (with explicit confirmation)
+
+Detailed flag reference is in [`skills/acli/references/`](skills/acli/references/).
 
 ## Sub-Agents
 
