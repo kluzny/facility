@@ -2,6 +2,20 @@
 
 This repo is a collection of Claude Code skills and supporting documentation for agentic development. Skills live in `skills/<name>/` and are installed into Claude Code as `/<name>` slash commands.
 
+## GitHub operations
+
+Use `gh` (via the `/gh` skill) for **all** GitHub operations — issues, pull requests, CI runs, and project board management. Do not use the GitHub web UI or raw `curl` API calls when `gh` can do the job.
+
+## Agent reference docs
+
+Detailed guidance lives in `docs/agents/`. Read the relevant file before starting work in that area.
+
+```
+docs/agents/
+  drafting_skills.md      # conventions and patterns for writing new skills
+  project_management.md   # project board phases, issue workflow, gh commands
+```
+
 ## Repo layout
 
 ```
