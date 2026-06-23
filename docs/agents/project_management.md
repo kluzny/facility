@@ -25,16 +25,13 @@ Use the `/gh` skill for all interactions with issues, pull requests, and the pro
 
 ### Starting work
 
-Pick an issue from **Ready**, then run the snippet below. It creates a branch named `{number}-{slugified-title}` (e.g. issue #42 "Add shortcut skill" → `42-add-shortcut-skill`) and moves the issue to **In Progress**.
+Pick an issue from **Ready**, then run the snippet below. It creates a branch using `gh`'s auto-generated name and moves the issue to **In Progress**.
 
 ```bash
 NUM=42   # replace with issue number
 
-# Create branch and check it out
-SLUG=$(gh issue view $NUM --json title -q '.title' \
-  | tr '[:upper:]' '[:lower:]' \
-  | sed 's/[^a-z0-9]/-/g; s/-\+/-/g; s/^-//; s/-$//')
-gh issue develop $NUM --checkout --name "${NUM}-${SLUG}"
+# Create branch and check it out (gh generates the branch name)
+gh issue develop $NUM --checkout
 
 # Move to In Progress (skip if already there)
 ITEM_ID=$(gh project item-list 1 --owner kluzny --format json \
