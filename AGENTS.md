@@ -6,6 +6,8 @@ This repo is a collection of Claude Code skills and supporting documentation for
 
 Use `gh` (via the `/gh` skill) for **all** GitHub operations — issues, pull requests, CI runs, and project board management. Do not use the GitHub web UI or raw `curl` API calls when `gh` can do the job.
 
+**Working an issue:** read `docs/agents/project_management.md` first. The required sequence is: (1) create and check out the branch, (2) move the issue to **In Progress** on the project board, (3) do the work, (4) open a PR and move the issue to **In Review**. Do not skip the board updates.
+
 ## Agent reference docs
 
 Detailed guidance lives in `docs/agents/`. Read the relevant file before starting work in that area.

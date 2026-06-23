@@ -29,15 +29,16 @@ All branches are cut from `master` and PRs target `master`. Never use `main`, `d
 
 ### Starting work
 
-Pick an issue from **Ready**, then run the snippet below. It creates a branch from `master` using `gh`'s auto-generated name and moves the issue to **In Progress**.
+When asked to work an issue, complete **all three steps** before doing any implementation work. Do not skip the board update.
 
+**Step 1 — Create and check out the branch:**
 ```bash
-NUM=42   # replace with issue number
+gh issue develop <number> --checkout
+```
 
-# Create branch and check it out (gh generates the branch name)
-gh issue develop $NUM --checkout
-
-# Move to In Progress (skip if already there)
+**Step 2 — Move the issue to In Progress** (mandatory — do not skip):
+```bash
+NUM=<number>
 ITEM_ID=$(gh project item-list 1 --owner kluzny --format json \
   | jq -r --arg url "$(gh issue view $NUM --json url -q '.url')" \
   '.items[] | select(.content.url == $url) | .id')
@@ -47,6 +48,8 @@ gh project item-edit \
   --field-id PVTSSF_lAHOABREfs4BbZlMzhWKW0M \
   --single-select-option-id 47fc9ee4
 ```
+
+**Step 3 — Confirm:** report the branch name and that the issue has been moved to In Progress before proceeding.
 
 **Project IDs (pre-looked-up — do not re-query each time):**
 
