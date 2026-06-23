@@ -43,6 +43,19 @@ run() {
   fi
 }
 
+link_item() {
+  local src="$1" dest="$2" dest_dir="$3"
+  echo "link: $dest → $src"
+  if [[ -L "$dest" ]]; then
+    run ln -sfn "$src" "$dest"
+  elif [[ -e "$dest" ]]; then
+    echo "  WARN: $dest exists and is not a symlink — skipping (remove it manually to replace)"
+  else
+    run mkdir -p "$dest_dir"
+    run ln -s "$src" "$dest"
+  fi
+}
+
 link_skill() {
   local name="$1"
   local src="$SKILLS_SRC/$name"
@@ -53,16 +66,7 @@ link_skill() {
     return 0
   fi
 
-  echo "link: $dest → $src"
-
-  if [[ -L "$dest" ]]; then
-    run ln -sfn "$src" "$dest"
-  elif [[ -e "$dest" ]]; then
-    echo "  WARN: $dest exists and is not a symlink — skipping (remove it manually to replace)"
-  else
-    run mkdir -p "$SKILLS_DEST"
-    run ln -s "$src" "$dest"
-  fi
+  link_item "$src" "$dest" "$SKILLS_DEST"
 }
 
 link_agent() {
@@ -75,16 +79,7 @@ link_agent() {
     return 0
   fi
 
-  echo "link: $dest → $src"
-
-  if [[ -L "$dest" ]]; then
-    run ln -sfn "$src" "$dest"
-  elif [[ -e "$dest" ]]; then
-    echo "  WARN: $dest exists and is not a symlink — skipping (remove it manually to replace)"
-  else
-    run mkdir -p "$AGENTS_DEST"
-    run ln -s "$src" "$dest"
-  fi
+  link_item "$src" "$dest" "$AGENTS_DEST"
 }
 
 install_all_skills() {

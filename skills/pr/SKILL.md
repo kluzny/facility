@@ -8,7 +8,7 @@ allowed-tools: Bash(gh *) Bash(glab *) Agent
 
 ## Phase 1 — Draft (subagent)
 
-Read `agents/git-draft-pr.md` and spawn an Agent with its full contents as the prompt.
+Read `~/.claude/agents/git-draft-pr.md` and spawn an Agent with its full contents as the prompt.
 
 The agent returns a JSON object:
 
@@ -28,6 +28,8 @@ The agent returns a JSON object:
 
 Show the **complete draft text** verbatim — exactly as it would appear in the PR/MR description. Do not summarize or describe it.
 
+If the draft includes a `Closes #N` line, call it out explicitly and ask the user to confirm it refers to the correct issue before proceeding.
+
 If `existing_pr` is `null`, ask: "No open PR/MR found for this branch — would you like to create one?"
 
 Then offer the appropriate actions based on platform and whether a PR/MR exists:
@@ -46,8 +48,21 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 **GitLab (no MR):**
 - **Create MR** — confirm or revise the suggested title, then: `glab mr create --title "<title>" --description "<draft>"`
 
+**Unknown platform:**
+- Tell the user the platform could not be detected from the remote URL
+- Show the draft for manual copy-paste
+- Do not attempt any gh or glab commands
+
 **Either platform:**
 - **Revise** — accept changes from the user and re-spawn the agent if the diff needs re-reading, otherwise revise the draft inline
 - **Cancel** — do nothing
+
+When constructing gh or glab commands, always pass multi-line body text via a heredoc to avoid shell quoting issues with quotes or special characters in the draft:
+```
+gh pr create --title "<title>" --body "$(cat <<'EOF'
+<draft>
+EOF
+)"
+```
 
 Never create, apply, or comment until the user explicitly confirms their choice.

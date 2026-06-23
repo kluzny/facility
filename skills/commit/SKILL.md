@@ -11,7 +11,7 @@ allowed-tools: Bash(git *) Agent
 Run `git status --short` to see all changes.
 
 If unstaged changes exist (lines starting with a space or `?`), ask the user to choose:
-- **Stage all tracked** — run `git add -u`
+- **Stage all** — run `git add .`
 - **Stage specific files** — ask which files, then run `git add <files>`
 - **Proceed with staged only** — skip unstaged changes entirely
 
@@ -19,7 +19,7 @@ Do not run any `git add` command without the user's explicit choice.
 
 ## Phase 2 — Draft (subagent)
 
-Once staging is resolved, read `agents/git-draft-commit.md` and spawn an Agent with its full contents as the prompt.
+Once staging is resolved, read `~/.claude/agents/git-draft-commit.md` and spawn an Agent with its full contents as the prompt.
 
 The agent returns a JSON object:
 
@@ -49,5 +49,4 @@ Never run `git commit` until the user explicitly selects Commit or Edit message.
 
 - Never use `--no-verify`
 - Never use `--amend` unless the user explicitly requests it
-- Never run `git add -A` or `git add .`
 - Never commit without explicit user confirmation

@@ -43,13 +43,24 @@ run() {
   fi
 }
 
-unlink_skill() {
-  local name="$1"
-  local dest="$SKILLS_DEST/$name"
-  local expected_src="$SKILLS_SRC/$name"
+resolve_symlink() {
+  local dest="$1"
+  local target link_dir
+  target="$(readlink "$dest")"
+  if [[ "$target" != /* ]]; then
+    link_dir="$(cd "$(dirname "$dest")" && pwd)"
+    # Navigate into dirname(target) then reconstruct — handles both file and
+    # directory symlinks (cd into a file path would fail with the old approach)
+    target="$(cd "$link_dir/$(dirname "$target")" 2>/dev/null && echo "$(pwd)/$(basename "$target")" || echo "$target")"
+  fi
+  echo "$target"
+}
+
+unlink_item() {
+  local label="$1" dest="$2" expected_src="$3"
 
   if [[ ! -e "$dest" && ! -L "$dest" ]]; then
-    echo "SKIP: skill/$name (not installed at $dest)"
+    echo "SKIP: $label (not installed at $dest)"
     return 0
   fi
 
@@ -59,11 +70,7 @@ unlink_skill() {
   fi
 
   local target
-  target="$(readlink "$dest")"
-
-  if [[ "$target" != /* ]]; then
-    target="$(cd "$(dirname "$dest")" && cd "$target" 2>/dev/null && pwd || echo "$target")"
-  fi
+  target="$(resolve_symlink "$dest")"
 
   if [[ "$target" == "$expected_src" || "$target" == "$expected_src"/ ]]; then
     echo "unlink: $dest"
@@ -73,34 +80,14 @@ unlink_skill() {
   fi
 }
 
+unlink_skill() {
+  local name="$1"
+  unlink_item "skill/$name" "$SKILLS_DEST/$name" "$SKILLS_SRC/$name"
+}
+
 unlink_agent() {
   local name="$1"
-  local dest="$AGENTS_DEST/$name.md"
-  local expected_src="$AGENTS_SRC/$name.md"
-
-  if [[ ! -e "$dest" && ! -L "$dest" ]]; then
-    echo "SKIP: agent/$name (not installed at $dest)"
-    return 0
-  fi
-
-  if [[ ! -L "$dest" ]]; then
-    echo "WARN: $dest exists but is not a symlink — skipping (remove it manually if intended)"
-    return 0
-  fi
-
-  local target
-  target="$(readlink "$dest")"
-
-  if [[ "$target" != /* ]]; then
-    target="$(cd "$(dirname "$dest")" && cd "$target" 2>/dev/null && pwd || echo "$target")"
-  fi
-
-  if [[ "$target" == "$expected_src" || "$target" == "$expected_src"/ ]]; then
-    echo "unlink: $dest"
-    run rm "$dest"
-  else
-    echo "WARN: $dest → $target (not ours — skipping)"
-  fi
+  unlink_item "agent/$name" "$AGENTS_DEST/$name.md" "$AGENTS_SRC/$name.md"
 }
 
 unlink_all_skills() {

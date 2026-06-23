@@ -40,21 +40,25 @@ The authoritative Claude Code skills reference is at **https://code.claude.com/d
 ## Installing skills locally
 
 ```bash
-./scripts/install.sh                  # symlink all skills
-./scripts/install.sh --skill=all      # same as above, explicit
-./scripts/install.sh --skill=shortcut # symlink one skill
-./scripts/install.sh --dry-run        # preview without changes
+./scripts/install.sh                          # symlink all skills and agents
+./scripts/install.sh --skill=all              # same as above, explicit
+./scripts/install.sh --skill=shortcut         # symlink one skill
+./scripts/install.sh --agent=all              # symlink all agents only
+./scripts/install.sh --agent=git-draft-commit # symlink one agent
+./scripts/install.sh --dry-run                # preview without changes
 ```
 
-Skills are symlinked, so edits in this repo are reflected immediately.
+Skills and agents are symlinked, so edits in this repo are reflected immediately.
 
 ## Uninstalling
 
 ```bash
-./scripts/uninstall.sh                  # remove all our symlinks
-./scripts/uninstall.sh --skill=all      # same as above, explicit
-./scripts/uninstall.sh --skill=shortcut # remove one skill
-./scripts/uninstall.sh --dry-run        # preview without changes
+./scripts/uninstall.sh                          # remove all our symlinks
+./scripts/uninstall.sh --skill=all              # same as above, explicit
+./scripts/uninstall.sh --skill=shortcut         # remove one skill
+./scripts/uninstall.sh --agent=all              # remove all agents only
+./scripts/uninstall.sh --agent=git-draft-commit # remove one agent
+./scripts/uninstall.sh --dry-run                # preview without changes
 ```
 
 Only removes symlinks that point back to this repo; warns about anything else.
