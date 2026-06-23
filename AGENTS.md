@@ -15,6 +15,7 @@ Detailed guidance lives in `docs/agents/`. Read the relevant file before startin
 ```
 docs/agents/
   drafting_skills.md      # conventions and patterns for writing new skills
+  drafting_agents.md      # conventions and patterns for writing new sub-agents
   project_management.md   # project board phases, issue workflow, gh commands
 ```
 
@@ -24,6 +25,8 @@ docs/agents/
 skills/<name>/
   SKILL.md              # skill entry point (loaded by Claude Code)
   references/           # detailed flag/command reference docs (optional)
+agents/
+  <name>.md             # sub-agent prompt files (delegated heavy work)
 docs/agents/            # agent-facing guidance for working in this repo
 scripts/                # install/uninstall helpers
 ```

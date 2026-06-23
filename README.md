@@ -4,20 +4,32 @@ A collection of Agents, Skills, and Markdown tooling for Agentic development.
 
 ## Installation
 
-Clone the repo, then symlink the skills you want into your Claude skills directory:
+Clone the repo, then symlink the skills and agents into your Claude directory:
 
 ```bash
-# Install all skills
+# Install everything (skills + agents)
 ./scripts/install.sh
 
 # Install a specific skill
-./scripts/install.sh shortcut
+./scripts/install.sh --skill=shortcut
+
+# Install a specific agent
+./scripts/install.sh --agent=git-draft-commit
 
 # Preview what would be linked without making changes
 ./scripts/install.sh --dry-run
 ```
 
-Skills are symlinked (not copied), so any edits you make in this repo are reflected immediately without re-running the installer.
+Everything is symlinked (not copied), so edits in this repo are reflected immediately without re-running the installer.
+
+```bash
+# Uninstall everything
+./scripts/uninstall.sh
+
+# Uninstall a specific skill or agent
+./scripts/uninstall.sh --skill=shortcut
+./scripts/uninstall.sh --agent=git-draft-commit
+```
 
 **Requirements:** Claude Code v2.1.145+, Node.js (for skills that depend on CLI tools).
 
@@ -120,6 +132,15 @@ glab auth login
 - Raw REST API access via `glab api`
 
 Detailed flag reference is in [`skills/glab/references/`](skills/glab/references/).
+
+## Sub-Agents
+
+Sub-agents are delegate prompts that skills spawn via the Agent tool to handle heavy, read-only work — keeping that context out of the main conversation window. Each agent lives in `agents/<name>.md` and returns a structured JSON result to its parent skill.
+
+| Agent | Used by | Description |
+|-------|---------|-------------|
+| [git-draft-commit](agents/git-draft-commit.md) | `/commit` | Reads staged diff and drafts a commit message |
+| [git-draft-pr](agents/git-draft-pr.md) | `/pr` | Reads branch diff and drafts a PR/MR description |
 
 ## (Un)License
 

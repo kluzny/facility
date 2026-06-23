@@ -1,45 +1,44 @@
 ---
 description: Stage changes and commit with a drafted single-line message. Works with any git remote.
 disable-model-invocation: true
-allowed-tools: Bash(git *)
+allowed-tools: Bash(git *) Agent
 ---
 
 **Announce at start:** "Running /commit — checking staged and unstaged changes."
 
-## Gather Context
+## Phase 1 — Handle Staging
 
-Run the following before doing anything else:
+Run `git status --short` to see all changes.
 
-1. `git status --short` — see all staged and unstaged changes
-2. `git diff --cached --stat` — staged files and their change counts
-
-## Handle Unstaged Changes
-
-If `git status --short` shows unstaged changes (lines starting with a space or `?`):
-
-Ask the user to choose one of:
+If unstaged changes exist (lines starting with a space or `?`), ask the user to choose:
 - **Stage all tracked** — run `git add -u`
 - **Stage specific files** — ask which files, then run `git add <files>`
 - **Proceed with staged only** — skip unstaged changes entirely
 
 Do not run any `git add` command without the user's explicit choice.
 
-## Draft the Commit Message
+## Phase 2 — Draft (subagent)
 
-Run `git diff --cached` to read the full staged diff, then draft a message:
+Once staging is resolved, read `agents/git-draft-commit.md` and spawn an Agent with its full contents as the prompt.
 
-- **Default: single line**, imperative mood, ≤72 characters (e.g. `fix login timeout on session expiry`)
-- Only offer a multi-line message (subject + blank line + body) when the diff clearly spans multiple unrelated concerns or includes a breaking change — and even then, confirm with the user first
-- Match the capitalisation and punctuation style of recent commits in the repo (`git log --oneline -10`)
+The agent returns a JSON object:
 
-## Preview and Confirm
+```json
+{
+  "staged_files": ["path/to/file"],
+  "proposed_message": "imperative mood message",
+  "concerns": []
+}
+```
+
+## Phase 3 — Preview and Confirm
 
 Show:
 1. The proposed commit message (verbatim, in a code block)
-2. The list of files being committed
+2. The list of staged files
+3. Any concerns the agent flagged — if present, ask whether to proceed or revise before offering the actions below
 
 Then ask the user to choose:
-
 - **Commit** — run `git commit -m "<message>"`
 - **Edit message** — accept a revised message from the user, then commit
 - **Cancel** — do nothing
