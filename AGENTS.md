@@ -6,6 +6,8 @@ This repo is a collection of Claude Code skills and supporting documentation for
 
 Use `gh` (via the `/gh` skill) for **all** GitHub operations — issues, pull requests, CI runs, and project board management. Do not use the GitHub web UI or raw `curl` API calls when `gh` can do the job.
 
+**Working an issue:** read `docs/agents/project_management.md` first. The required sequence is: (1) create and check out the branch, (2) move the issue to **In Progress** on the project board, (3) do the work, (4) open a PR and move the issue to **In Review**. Do not skip the board updates.
+
 ## Agent reference docs
 
 Detailed guidance lives in `docs/agents/`. Read the relevant file before starting work in that area.
@@ -13,6 +15,7 @@ Detailed guidance lives in `docs/agents/`. Read the relevant file before startin
 ```
 docs/agents/
   drafting_skills.md      # conventions and patterns for writing new skills
+  drafting_agents.md      # conventions and patterns for writing new sub-agents
   project_management.md   # project board phases, issue workflow, gh commands
 ```
 
@@ -22,6 +25,8 @@ docs/agents/
 skills/<name>/
   SKILL.md              # skill entry point (loaded by Claude Code)
   references/           # detailed flag/command reference docs (optional)
+agents/
+  <name>.md             # sub-agent prompt files (delegated heavy work)
 docs/agents/            # agent-facing guidance for working in this repo
 scripts/                # install/uninstall helpers
 ```
@@ -35,21 +40,25 @@ The authoritative Claude Code skills reference is at **https://code.claude.com/d
 ## Installing skills locally
 
 ```bash
-./scripts/install.sh                  # symlink all skills
-./scripts/install.sh --skill=all      # same as above, explicit
-./scripts/install.sh --skill=shortcut # symlink one skill
-./scripts/install.sh --dry-run        # preview without changes
+./scripts/install.sh                          # symlink all skills and agents
+./scripts/install.sh --skill=all              # same as above, explicit
+./scripts/install.sh --skill=shortcut         # symlink one skill
+./scripts/install.sh --agent=all              # symlink all agents only
+./scripts/install.sh --agent=git-draft-commit # symlink one agent
+./scripts/install.sh --dry-run                # preview without changes
 ```
 
-Skills are symlinked, so edits in this repo are reflected immediately.
+Skills and agents are symlinked, so edits in this repo are reflected immediately.
 
 ## Uninstalling
 
 ```bash
-./scripts/uninstall.sh                  # remove all our symlinks
-./scripts/uninstall.sh --skill=all      # same as above, explicit
-./scripts/uninstall.sh --skill=shortcut # remove one skill
-./scripts/uninstall.sh --dry-run        # preview without changes
+./scripts/uninstall.sh                          # remove all our symlinks
+./scripts/uninstall.sh --skill=all              # same as above, explicit
+./scripts/uninstall.sh --skill=shortcut         # remove one skill
+./scripts/uninstall.sh --agent=all              # remove all agents only
+./scripts/uninstall.sh --agent=git-draft-commit # remove one agent
+./scripts/uninstall.sh --dry-run                # preview without changes
 ```
 
 Only removes symlinks that point back to this repo; warns about anything else.

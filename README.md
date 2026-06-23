@@ -4,20 +4,32 @@ A collection of Agents, Skills, and Markdown tooling for Agentic development.
 
 ## Installation
 
-Clone the repo, then symlink the skills you want into your Claude skills directory:
+Clone the repo, then symlink the skills and agents into your Claude directory:
 
 ```bash
-# Install all skills
+# Install everything (skills + agents)
 ./scripts/install.sh
 
 # Install a specific skill
-./scripts/install.sh shortcut
+./scripts/install.sh --skill=shortcut
+
+# Install a specific agent
+./scripts/install.sh --agent=git-draft-commit
 
 # Preview what would be linked without making changes
 ./scripts/install.sh --dry-run
 ```
 
-Skills are symlinked (not copied), so any edits you make in this repo are reflected immediately without re-running the installer.
+Everything is symlinked (not copied), so edits in this repo are reflected immediately without re-running the installer.
+
+```bash
+# Uninstall everything
+./scripts/uninstall.sh
+
+# Uninstall a specific skill or agent
+./scripts/uninstall.sh --skill=shortcut
+./scripts/uninstall.sh --agent=git-draft-commit
+```
 
 **Requirements:** Claude Code v2.1.145+, Node.js (for skills that depend on CLI tools).
 
@@ -27,9 +39,33 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 
 | Skill | Command | Description |
 |-------|---------|-------------|
+| [commit](skills/commit/) | `/commit` | Stage changes and commit with a drafted single-line message |
+| [pr](skills/pr/) | `/pr` | Draft and apply a pull request or merge request description |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
+
+### commit
+
+Guides Claude through staging changes and committing them with a well-drafted message. Works with any git remote.
+
+**What it covers:**
+- Inspects staged and unstaged changes before doing anything
+- Prompts you to choose which unstaged changes (if any) to stage
+- Drafts a concise, imperative-mood commit message (≤72 chars) matched to the repo's style
+- Shows the message and file list for review before committing
+- Never runs `git commit` without your explicit confirmation
+
+### pr
+
+Drafts a pull request (GitHub) or merge request (GitLab) description from the current branch. Auto-detects the platform from the remote URL.
+
+**What it covers:**
+- Detects whether a PR/MR already exists for the branch and offers to update it, or creates a new one
+- Gathers commits, file-level stats, and the full diff to write a focused Summary + Key Changes description
+- Parses the branch name for a ticket/story reference (e.g. `SC-123`, `PROJ-456`) and includes it
+- Shows the complete draft verbatim for review before applying, commenting, or creating
+- Never creates or modifies a PR/MR without your explicit confirmation
 
 ### shortcut
 
@@ -96,6 +132,15 @@ glab auth login
 - Raw REST API access via `glab api`
 
 Detailed flag reference is in [`skills/glab/references/`](skills/glab/references/).
+
+## Sub-Agents
+
+Sub-agents are delegate prompts that skills spawn via the Agent tool to handle heavy, read-only work — keeping that context out of the main conversation window. Each agent lives in `agents/<name>.md` and returns a structured JSON result to its parent skill.
+
+| Agent | Used by | Description |
+|-------|---------|-------------|
+| [git-draft-commit](agents/git-draft-commit.md) | `/commit` | Reads staged diff and drafts a commit message |
+| [git-draft-pr](agents/git-draft-pr.md) | `/pr` | Reads branch diff and drafts a PR/MR description |
 
 ## (Un)License
 
