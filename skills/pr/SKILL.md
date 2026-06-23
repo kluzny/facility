@@ -30,7 +30,10 @@ After detecting the platform, check whether an open PR/MR already exists for the
 Run all of the following before drafting anything:
 
 1. `git branch --show-current` — current branch name
-2. Detect base branch: try `git show-ref --verify refs/heads/main`, then `master`, then `develop`; use the first that exists
+2. Detect base branch — run each command in order; use the first that exits 0:
+   - `git show-ref --verify refs/heads/master`
+   - `git show-ref --verify refs/heads/main`
+   - `git show-ref --verify refs/heads/develop`
 3. `git log <base>..HEAD --oneline` — commits on this branch
 4. `git log <base>..HEAD --stat` — file-level change summary
 5. `git diff <base>...HEAD` — full code diff

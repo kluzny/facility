@@ -23,9 +23,13 @@ Use the `/gh` skill for all interactions with issues, pull requests, and the pro
 
 ## Workflow
 
+All branches are cut from `master` and PRs target `master`. Never use `main`, `develop`, or any other base branch.
+
+> The `/pr` skill auto-detects the base branch (trying `master` first, then `main`, then `develop`), so it will always resolve to `master` in this repo.
+
 ### Starting work
 
-Pick an issue from **Ready**, then run the snippet below. It creates a branch using `gh`'s auto-generated name and moves the issue to **In Progress**.
+Pick an issue from **Ready**, then run the snippet below. It creates a branch from `master` using `gh`'s auto-generated name and moves the issue to **In Progress**.
 
 ```bash
 NUM=42   # replace with issue number
