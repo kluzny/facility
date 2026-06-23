@@ -27,9 +27,33 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 
 | Skill | Command | Description |
 |-------|---------|-------------|
+| [commit](skills/commit/) | `/commit` | Stage changes and commit with a drafted single-line message |
+| [pr](skills/pr/) | `/pr` | Draft and apply a pull request or merge request description |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
+
+### commit
+
+Guides Claude through staging changes and committing them with a well-drafted message. Works with any git remote.
+
+**What it covers:**
+- Inspects staged and unstaged changes before doing anything
+- Prompts you to choose which unstaged changes (if any) to stage
+- Drafts a concise, imperative-mood commit message (≤72 chars) matched to the repo's style
+- Shows the message and file list for review before committing
+- Never runs `git commit` without your explicit confirmation
+
+### pr
+
+Drafts a pull request (GitHub) or merge request (GitLab) description from the current branch. Auto-detects the platform from the remote URL.
+
+**What it covers:**
+- Detects whether a PR/MR already exists for the branch and offers to update it, or creates a new one
+- Gathers commits, file-level stats, and the full diff to write a focused Summary + Key Changes description
+- Parses the branch name for a ticket/story reference (e.g. `SC-123`, `PROJ-456`) and includes it
+- Shows the complete draft verbatim for review before applying, commenting, or creating
+- Never creates or modifies a PR/MR without your explicit confirmation
 
 ### shortcut
 
