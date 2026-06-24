@@ -74,6 +74,14 @@ gh project item-edit \
   --single-select-option-id df73e18b
 ```
 
+### Merging a PR
+
+Always use `--merge` (merge commit). Squash and rebase are disabled at the repo level.
+
+```bash
+gh pr merge <number> --merge
+```
+
 ### After merge
 GitHub moves the issue to **Done** automatically when the linked PR merges. No manual step needed.
 
