@@ -39,14 +39,18 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Add as comment** — `gh pr comment <number> --body "<draft>"`
 
 **GitHub (no PR):**
-- **Create PR** — confirm or revise the suggested title, then: `gh pr create --title "<title>" --body "<draft>"`
+- **Create PR** — confirm or revise the suggested title, then:
+  1. `git push -u origin <branch>` — push the branch if not already pushed
+  2. `gh pr create --title "<title>" --body "<draft>"`
 
 **GitLab (MR exists):**
 - **Apply** — `glab mr update <number> --description "<draft>"`
 - **Add as comment** — `glab mr note <number> --message "<draft>"`
 
 **GitLab (no MR):**
-- **Create MR** — confirm or revise the suggested title, then: `glab mr create --title "<title>" --description "<draft>"`
+- **Create MR** — confirm or revise the suggested title, then:
+  1. `git push -u origin <branch>` — push the branch if not already pushed
+  2. `glab mr create --title "<title>" --description "<draft>"`
 
 **Unknown platform:**
 - Tell the user the platform could not be detected from the remote URL
@@ -58,8 +62,18 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Cancel** — do nothing
 
 When constructing gh or glab commands, always pass multi-line body text via a heredoc to avoid shell quoting issues with quotes or special characters in the draft:
+
+GitHub (`gh`) — uses `--body`:
 ```
 gh pr create --title "<title>" --body "$(cat <<'EOF'
+<draft>
+EOF
+)"
+```
+
+GitLab (`glab`) — uses `--description` (never `--body`, which is not a valid flag):
+```
+glab mr create --title "<title>" --description "$(cat <<'EOF'
 <draft>
 EOF
 )"
