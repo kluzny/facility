@@ -39,14 +39,18 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Add as comment** — `gh pr comment <number> --body "<draft>"`
 
 **GitHub (no PR):**
-- **Create PR** — confirm or revise the suggested title, then: `gh pr create --title "<title>" --body "<draft>"`
+- **Create PR** — confirm or revise the suggested title, then:
+  1. `git push -u origin <branch>` — push the branch if not already pushed
+  2. `gh pr create --title "<title>" --body "<draft>"`
 
 **GitLab (MR exists):**
 - **Apply** — `glab mr update <number> --description "<draft>"`
 - **Add as comment** — `glab mr note <number> --message "<draft>"`
 
 **GitLab (no MR):**
-- **Create MR** — confirm or revise the suggested title, then: `glab mr create --title "<title>" --description "<draft>"`
+- **Create MR** — confirm or revise the suggested title, then:
+  1. `git push -u origin <branch>` — push the branch if not already pushed
+  2. `glab mr create --title "<title>" --description "<draft>"`
 
 **Unknown platform:**
 - Tell the user the platform could not be detected from the remote URL
