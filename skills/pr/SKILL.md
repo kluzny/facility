@@ -58,8 +58,18 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Cancel** — do nothing
 
 When constructing gh or glab commands, always pass multi-line body text via a heredoc to avoid shell quoting issues with quotes or special characters in the draft:
+
+GitHub (`gh`) — uses `--body`:
 ```
 gh pr create --title "<title>" --body "$(cat <<'EOF'
+<draft>
+EOF
+)"
+```
+
+GitLab (`glab`) — uses `--description` (never `--body`, which is not a valid flag):
+```
+glab mr create --title "<title>" --description "$(cat <<'EOF'
 <draft>
 EOF
 )"
