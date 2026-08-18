@@ -26,13 +26,14 @@ A comment passes only if it satisfies all of:
 3. **Concise** — as short as clarity allows; doesn't restate argument names, types, or anything the code already makes obvious.
 4. **Adds value** — explains a *why*, a non-obvious constraint, a gotcha, or intent not already evident from a plain reading. Comments should be the exception, not the rule.
 5. **Not a flat restatement** — fails if it just narrates what the next line visibly does (e.g. `// increment i` above `i++`).
+6. **No bare transitional language** — avoid words that describe the change itself rather than the code's current state (`now`, `new`, `updated`, `previously`, `renamed from`, `used to`, `changed to`). That framing rots the moment the next change lands. It's acceptable only when the historical contrast is genuinely relevant to understanding the code today *and* it's anchored to durable documentation (a linked ticket, ADR, or commit/PR reference) rather than left as a free-floating aside.
 
 Classify each failing comment:
 
-- `remove` — fails (4) or (5) with nothing salvageable; the comment is pure noise.
-- `rewrite` — the underlying intent is worth keeping, but the wording is inaccurate, stale, too verbose, or off-style; propose corrected text.
+- `remove` — fails (4) or (5) with nothing salvageable, or fails (6) and nothing remains once the transitional framing is stripped; the comment is pure noise.
+- `rewrite` — the underlying intent is worth keeping, but the wording is inaccurate, stale, too verbose, off-style, or transitional; propose corrected text describing the current state instead.
 
-Do not report comments that pass all five criteria — the output should contain findings only.
+Do not report comments that pass all six criteria — the output should contain findings only.
 
 ## Output
 
