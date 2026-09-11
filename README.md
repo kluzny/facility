@@ -41,7 +41,7 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 |-------|---------|-------------|
 | [commit](skills/commit/) | `/commit` | Stage changes and commit with a drafted single-line message |
 | [pr](skills/pr/) | `/pr` | Draft and apply a pull request or merge request description |
-| [dr_pepper](skills/dr_pepper/) | `/dr_pepper` | Audit code comments for accuracy, relevance, and necessity |
+| [dr_pepper](skills/dr_pepper/) | `/dr_pepper` | Audit documentation and code comments for accuracy, relevance, and necessity |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
@@ -71,13 +71,13 @@ Drafts a pull request (GitHub) or merge request (GitLab) description from the cu
 
 ### dr_pepper
 
-Audits comments in a diff or a set of files, flagging ones that are inaccurate, off-style, or add no value beyond a plain reading of the code — the kind of noise LLMs tend to leave behind.
+Audits documentation and code comments in a diff, commit, branch, file, or directory, flagging ones that are inaccurate, off-style, or add no value beyond a plain reading — the kind of noise LLMs tend to leave behind.
 
 **What it covers:**
 - Defaults to auditing uncommitted changes, or the current branch's diff against its base if nothing is uncommitted
-- Can also be pointed at specific files
-- Checks each comment for accuracy, idiom fit with the surrounding code, conciseness, and whether it adds context a plain reading wouldn't already give
-- Flags flat restatements of the code for removal and stale/verbose comments for rewrite
+- Can also be pointed at specific files, a directory, a commit, or a branch
+- Checks each comment or doc passage for accuracy, idiom fit with the surrounding context, conciseness, and whether it adds value a plain reading wouldn't already give
+- Flags flat restatements for removal and stale/verbose comments or docs for rewrite
 - Shows every finding before touching anything, and never edits without explicit confirmation
 
 ### shortcut
@@ -174,7 +174,7 @@ Sub-agents are delegate prompts that skills spawn via the Agent tool to handle h
 |-------|---------|-------------|
 | [git-draft-commit](agents/git-draft-commit.md) | `/commit` | Reads staged diff and drafts a commit message |
 | [git-draft-pr](agents/git-draft-pr.md) | `/pr` | Reads branch diff and drafts a PR/MR description |
-| [dr-pepper-audit](agents/dr-pepper-audit.md) | `/dr_pepper` | Reads a diff or file set and flags low-value or inaccurate comments |
+| [dr-pepper-audit](agents/dr-pepper-audit.md) | `/dr_pepper` | Reads a diff, commit, branch, file set, or directory and flags low-value or inaccurate comments and docs |
 
 ## (Un)License
 
