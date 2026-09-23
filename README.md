@@ -42,6 +42,7 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 | [commit](skills/commit/) | `/commit` | Stage changes and commit with a drafted single-line message |
 | [pr](skills/pr/) | `/pr` | Draft and apply a pull request or merge request description |
 | [dr_pepper](skills/dr_pepper/) | `/dr_pepper` | Audit documentation and code comments for accuracy, relevance, and necessity |
+| [guidance](skills/guidance/) | `/guidance` | Turn user feedback into high-level agent guidance and record it in AGENTS.md, splitting large guidance into docs/agents/ |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
@@ -79,6 +80,19 @@ Audits documentation and code comments in a diff, commit, branch, file, or direc
 - Checks each comment or doc passage for accuracy, idiom fit with the surrounding context, conciseness, and whether it adds value a plain reading wouldn't already give
 - Flags flat restatements for removal and stale/verbose comments or docs for rewrite
 - Shows every finding before touching anything, and never edits without explicit confirmation
+
+### guidance
+
+Takes a user concern or piece of feedback and converts it into standing agent guidance recorded in a repo's `AGENTS.md`. Short guidance is added inline; guidance that's large or complex (multi-step procedures, reference material, multiple sub-topics) is instead written to `docs/agents/<topic>.md`, with `AGENTS.md` updated to link to it via a file-tree-style listing.
+
+**What it covers:**
+- Translates raw feedback into forward-looking, do-oriented instructions rather than transcribing the complaint — prohibitions ("don't") are used only when the feedback is specifically about something to avoid
+- Writes guidance as high-level as correctness allows, adding specifics only where the general rule would otherwise be ambiguous
+- Strips incident-specific framing so the guidance reads as a standing rule, not a postmortem note
+- Merges into an existing section rather than duplicating one when the topic already has coverage
+- Applies a simple size/complexity heuristic to decide inline vs. dedicated doc
+- Creates `AGENTS.md` and/or `docs/agents/` from scratch if they don't exist yet
+- Shows the full drafted content before writing anything, and never writes without explicit confirmation
 
 ### shortcut
 
