@@ -42,6 +42,7 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 | [commit](skills/commit/) | `/commit` | Stage changes and commit with a drafted single-line message |
 | [pr](skills/pr/) | `/pr` | Draft and apply a pull request or merge request description |
 | [dr_pepper](skills/dr_pepper/) | `/dr_pepper` | Audit documentation and code comments for accuracy, relevance, and necessity |
+| [nit](skills/nit/) | `/nit` | Triage PR review feedback — dedupe, group by locality, rank by severity, auto-resolve outdated threads |
 | [guidance](skills/guidance/) | `/guidance` | Turn user feedback into high-level agent guidance and record it in AGENTS.md, splitting large guidance into docs/agents/ |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
@@ -80,6 +81,18 @@ Audits documentation and code comments in a diff, commit, branch, file, or direc
 - Checks each comment or doc passage for accuracy, idiom fit with the surrounding context, conciseness, and whether it adds value a plain reading wouldn't already give
 - Flags flat restatements for removal and stale/verbose comments or docs for rewrite
 - Shows every finding before touching anything, and never edits without explicit confirmation
+
+### nit
+
+Triages review feedback on a GitHub PR — filters out threads GitHub already marked outdated, deduplicates repeated feedback, groups the rest by code locality, and prints a severity-ranked table.
+
+**What it covers:**
+- Fetches every review thread via `gh api graphql` (needed for `isOutdated`/`isResolved`, which REST doesn't expose)
+- Auto-resolves threads GitHub already flagged as outdated — no confirmation needed, since GitHub itself already decided they're stale
+- Merges near-identical feedback (same nit raised at multiple call sites, or restated by multiple reviewers) into one row
+- Groups remaining feedback by file, directory, or feature area, whichever fits the PR's diff
+- Ranks each row `blocking → major → minor → nit → question`, using the reviewer's own framing first and content second
+- Never posts a comment or reply — resolving already-outdated threads is its only mutation
 
 ### guidance
 
