@@ -2,7 +2,7 @@
 name: dr_pepper
 description: Audit documentation and code comments for accuracy, relevance, and necessity — flags comments and doc passages that restate the code, drift from project conventions, or add no value beyond a plain reading.
 when_to_use: Trigger after writing or editing code or docs, when reviewing a diff, commit, branch, file, or directory for comment/doc quality, or when the user asks to check, audit, or clean up comments or documentation.
-allowed-tools: Bash(git diff *) Bash(git status *) Bash(git branch *) Bash(git show-ref *) Bash(git show *) Bash(git merge-base *) Bash(git rev-parse *) Read Edit Agent
+allowed-tools: Bash(git diff *) Bash(git status *) Bash(git branch *) Bash(git show-ref *) Bash(git show *) Bash(git merge-base *) Bash(git rev-parse *) Bash(head *) Bash(sed *) Read Edit Agent
 ---
 
 **Announce at start:** "Running dr_pepper — auditing docs and comments for relevance."
@@ -40,29 +40,7 @@ Read `~/.claude/agents/dr-pepper-audit.md` and spawn an Agent whose prompt is th
 Diff mode: `git diff HEAD`
 ```
 
-```
-## Scope for this run
-
-File mode: src/foo.rb, docs/setup.md
-```
-
-```
-## Scope for this run
-
-Directory mode: docs/
-```
-
-```
-## Scope for this run
-
-Commit mode: a1b2c3d
-```
-
-```
-## Scope for this run
-
-Branch mode: feature/foo (base: master)
-```
+The other modes take the same shape: `File mode: src/foo.rb, docs/setup.md` · `Directory mode: docs/` · `Commit mode: a1b2c3d` · `Branch mode: feature/foo (base: master)`.
 
 The agent returns:
 

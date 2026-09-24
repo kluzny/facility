@@ -19,15 +19,10 @@ Focus guidance:
 
 ## Steps
 
-1. Resolve the scope as given.
-2. Diff mode: run the given git command.
-3. Commit mode: run `git show <ref>`.
-4. Branch mode: run the given git diff/merge-base command.
-5. For diff, commit, and branch modes: `Read` each file the change touches, in full.
-6. File mode: `Read` each listed file in full.
-7. Directory mode: enumerate files under the directory (excluding the paths noted above), then `Read` each in full.
-8. Identify every comment and documentation passage in scope: line comments, block comments, docstrings, README/guide prose, inline how-to steps. Exclude directives (`eslint-disable`, `# type: ignore`, `# noqa`, `#!` shebangs, pragmas), license/copyright headers, changelog entries (inherently historical), and commented-out code left for an unrelated reason you can't verify — those are out of scope.
-9. Evaluate each item against the criteria below.
+1. Resolve the scope as given, running the command it supplies (commit mode: `git show <ref>`).
+2. `Read` in full every file in scope — the files a change touches, the files listed, or the files under the directory once you have enumerated it.
+3. Identify every comment and documentation passage in scope: line comments, block comments, docstrings, README/guide prose, inline how-to steps. Exclude directives (`eslint-disable`, `# type: ignore`, `# noqa`, `#!` shebangs, pragmas), license/copyright headers, changelog entries (inherently historical), and commented-out code left for an unrelated reason you can't verify — those are out of scope.
+4. Evaluate each item against the criteria below.
 
 ## Criteria
 

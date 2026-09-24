@@ -1,7 +1,7 @@
 ---
 description: Stage changes and commit with a drafted single-line message. Works with any git remote.
 disable-model-invocation: true
-allowed-tools: Bash(git *) Agent
+allowed-tools: Read Bash(git *) Agent
 ---
 
 **Announce at start:** "Running /commit — checking staged and unstaged changes."

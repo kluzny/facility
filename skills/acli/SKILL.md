@@ -1,7 +1,7 @@
 ---
 name: acli
-description: "Reference guide for the Atlassian CLI (acli) for Jira Cloud and Atlassian operations. Use when the user wants to perform Jira operations (create/edit/search/transition work items, manage projects, boards, sprints, filters, dashboards), administer Atlassian organizations, or automate Atlassian workflows from the terminal. Covers acli commands for jira workitem, project, board/sprint, filter/dashboard, and admin user management. Requires an authenticated acli binary already installed on the system."
-when_to_use: "Triggered by requests to view, create, search, edit, or transition Jira work items; manage Jira projects, boards, sprints, filters, or dashboards; administer Atlassian organizations; or run any acli command."
+description: Work with Jira Cloud and Atlassian organizations via the acli CLI — work items, projects, boards, sprints, filters, dashboards, and org user administration. Requires an authenticated acli binary on the system.
+when_to_use: Triggered by any Jira or Atlassian workspace operation, or any acli command.
 allowed-tools: Bash(acli *)
 ---
 
@@ -84,29 +84,11 @@ Four top-level command groups:
 - `acli rovodev` - Rovo Dev AI coding agent (Beta)
 - `acli feedback` - Submit feedback/bug reports
 
-## Jira Command Quick Reference
-
-### Work Item Operations
-- **`acli jira workitem view`** - Read ticket details (description, status, assignee)
-- **`acli jira workitem search`** - Find tickets via JQL queries
-- **`acli jira workitem create`** - Create new ticket (bug, task, story, epic)
-- **`acli jira workitem edit`** - Modify ticket summary, description, labels, type, assignee
-- **`acli jira workitem transition`** - Change ticket status
-- **`acli jira workitem assign`** - Change or remove assignee
-- **`acli jira workitem comment create`** - Add comment
-- **`acli jira workitem comment list`** - Read comments
-
-### Project & Board Operations
-- **`acli jira project list`** - List projects (discover project keys)
-- **`acli jira project view`** - View project details
-- **`acli jira board search`** - Find boards by name/keyword
-- **`acli jira sprint list-workitems`** - List sprint tickets (requires `--sprint`, `--board`)
-
 ## Core Concepts
 
 ### Command Best Practices
 - **Always use `--json`** on read commands (`view`, `search`, `comment list`, `project list`) for machine-readable output.
-- **Always use `--yes`** on mutations (`edit`, `transition`, `assign`) to skip interactive prompts.
+- **Use `--yes`** on `edit`, `transition`, and `assign` once the user has confirmed the change — it skips acli's own prompt, not the confirmation this skill requires. Never pair it with a destructive or bulk operation; see the agent safety rules under Security.
 - **Use `--fields`** to specify return fields (reduces output, improves readability).
 - **Use `--limit N`** to cap results (default: 30-50) or `--paginate` for all pages.
 
@@ -125,16 +107,6 @@ Four top-level command groups:
 ### Field Management
 - Status names are project-specific. If transition fails, error lists valid statuses.
 - For custom fields, use `--from-json` with `additionalAttributes`. Generate template: `acli jira workitem create --generate-json` (see Common Patterns).
-
-## Recommended Jira Workflow
-
-When working with Jira for the first time or on a new project:
-
-1. **Discover projects**: `acli jira project list --json`
-2. **Search for tickets**: `acli jira workitem search --jql "project = PROJ AND ..." --json`
-3. **View a ticket**: `acli jira workitem view PROJ-123 --json`
-4. **Create/edit/transition**: Use commands from Quick Reference below
-5. **Verify changes**: `acli jira workitem view PROJ-123 --json`
 
 ## Common JQL Patterns
 
@@ -207,7 +179,7 @@ acli jira workitem create --generate-json > template.json
 acli jira workitem create --from-json template.json
 ```
 
-## Quick Reference: Most Common Operations
+## Jira Command Quick Reference
 
 ### Work Items
 ```bash

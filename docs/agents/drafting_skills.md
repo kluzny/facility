@@ -175,7 +175,10 @@ The [`skills/shortcut/`](../../skills/shortcut/) skill is the canonical example.
 
 ## Checklist for a new skill
 
-- [ ] Frontmatter: `name`, `description`, `when_to_use`, `allowed-tools`
+- [ ] Frontmatter — reference skill: `name`, `description`, `when_to_use`, `allowed-tools`;
+      task skill: `description`, `disable-model-invocation: true`, `allowed-tools`
+- [ ] `allowed-tools` covers every tool and command the body actually instructs, including
+      `Read` when the skill reads an agent file and each binary in a prescribed pipeline
 - [ ] Announce at start line
 - [ ] Authentication section (if the tool requires credentials)
 - [ ] Defaults section (URLs, env vars, implicit field values)

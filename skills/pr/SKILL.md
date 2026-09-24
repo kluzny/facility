@@ -1,7 +1,7 @@
 ---
 description: Draft and apply a pull request or merge request description from the current branch. Works with GitHub (gh) and GitLab (glab).
 disable-model-invocation: true
-allowed-tools: Bash(gh *) Bash(glab *) Agent
+allowed-tools: Read Bash(git push *) Bash(gh *) Bash(glab *) Agent
 ---
 
 **Announce at start:** "Running /pr — spawning agent to gather branch context and draft a description."

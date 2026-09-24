@@ -101,7 +101,7 @@ In the parent skill's `SKILL.md`:
 2. Tell Claude to read the agent file and pass its contents as the prompt:
 
 ```markdown
-Read `agents/git-draft-commit.md` and spawn an Agent with its full contents as the prompt.
+Read `~/.claude/agents/git-draft-commit.md` and spawn an Agent with its full contents as the prompt.
 ```
 
 3. Document the expected JSON shape inline so Claude knows what to extract:

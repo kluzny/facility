@@ -33,7 +33,7 @@ Write the PR/MR description in this exact format:
 ```
 ## Summary
 
-<2–4 sentences on what changed and why — purpose and impact, not implementation detail>
+<what changed and why — purpose and impact for a reviewer, not implementation detail>
 
 ## Key Changes
 
