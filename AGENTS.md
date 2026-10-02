@@ -14,7 +14,7 @@ Detailed guidance lives in `docs/agents/`. Read the relevant file before startin
 
 ```
 docs/agents/
-  drafting_skills.md      # conventions and patterns for writing new skills
+  drafting_skills.md      # skill conventions, authoring best practices, checklist
   drafting_agents.md      # conventions and patterns for writing new sub-agents
   project_management.md   # project board phases, issue workflow, gh commands
 ```
