@@ -2,7 +2,7 @@
 name: acli
 description: Work with Jira Cloud and Atlassian organizations via the acli CLI — work items, projects, boards, sprints, filters, dashboards, and org user administration. Requires an authenticated acli binary on the system.
 when_to_use: Triggered by any Jira or Atlassian workspace operation, or any acli command.
-allowed-tools: Bash(acli *)
+allowed-tools: Bash(acli *) Bash(~/.claude/skills/acli/scripts/jira_ticket.sh *)
 ---
 
 **Announce at start:** "I'm using the acli skill to..."
@@ -12,6 +12,22 @@ allowed-tools: Bash(acli *)
 - Typical ticket format: `XX-####`
 - Typical branch name: `XX-####-ticket-title-slug`
 - Always print the ticket URL after any ticket specific operation
+
+## Reading a Work Item
+
+To read a ticket in full, run the bundled script instead of `acli jira workitem view` plus `jq`:
+
+```bash
+~/.claude/skills/acli/scripts/jira_ticket.sh KEY-123
+~/.claude/skills/acli/scripts/jira_ticket.sh https://example.atlassian.net/browse/KEY-123
+```
+
+It prints Markdown with every populated field, the description, all comments, attachments, worklog, parent, subtasks, and linked work items (key, status, summary). Links that block the ticket and are not done are fetched as well, with their descriptions inline under **Open blockers**. Rich text (tables, panels, task lists, code blocks) is converted from Atlassian Document Format.
+
+- Pass the key explicitly; the script does not infer it from the branch.
+- Custom fields appear by id (`customfield_12345`) because acli does not return field names.
+- Blocker detection matches the link's relation text against `JIRA_BLOCKER_PATTERN` (default `blocked by`); set it if a site uses other wording.
+- Use raw `acli ... --json` only when you need a field or shape the script does not print.
 
 ## Command Execution Policy
 
