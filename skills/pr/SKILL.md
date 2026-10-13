@@ -32,7 +32,7 @@ If the draft includes a `Closes #N` line, call it out explicitly and ask the use
 
 If `existing_pr` is `null`, ask: "No open PR/MR found for this branch — would you like to create one?"
 
-Then offer the appropriate actions based on platform and whether a PR/MR exists:
+Then offer the appropriate actions based on platform and whether a PR/MR exists. When no PR/MR exists, present them as a numbered list in this order: 1) Create, 2) Create as draft, 3) Revise, 4) Cancel.
 
 **GitHub (PR exists):**
 - **Apply** — `gh pr edit <number> --body "<draft>"`
@@ -42,6 +42,7 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Create PR** — confirm or revise the suggested title, then:
   1. `git push -u origin <branch>` — push the branch if not already pushed
   2. `gh pr create --title "<title>" --body "<draft>"`
+- **Create PR as draft** — same as **Create PR**, but add `--draft` to `gh pr create`
 
 **GitLab (MR exists):**
 - **Apply** — `glab mr update <number> --description "<draft>"`
@@ -51,6 +52,7 @@ Then offer the appropriate actions based on platform and whether a PR/MR exists:
 - **Create MR** — confirm or revise the suggested title, then:
   1. `git push -u origin <branch>` — push the branch if not already pushed
   2. `glab mr create --title "<title>" --description "<draft>"`
+- **Create MR as draft** — same as **Create MR**, but add `--draft` to `glab mr create`
 
 **Unknown platform:**
 - Tell the user the platform could not be detected from the remote URL
