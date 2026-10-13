@@ -43,6 +43,49 @@ Each thread's first comment is the original note; later comments are the reply c
 first comment's body as the primary text for grouping/severity, but read the whole chain — a
 later reply sometimes narrows or retracts the original ask.
 
+## Fetch PR conversation comments and review bodies
+
+Review threads only cover inline comments. Feedback also lands in top-level PR conversation
+comments (`comments`) and in the summary body submitted with a review (`reviews`) — a reviewer
+can leave an entire numbered list of findings there with no inline threads at all.
+
+```bash
+gh api graphql -f query='
+query($owner: String!, $repo: String!, $pr: Int!, $commentsCursor: String, $reviewsCursor: String) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) {
+      author { login }
+      headRefOid
+      comments(first: 100, after: $commentsCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { id body author { login } createdAt url isMinimized }
+      }
+      reviews(first: 100, after: $reviewsCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { id body state author { login } submittedAt url commit { oid } }
+      }
+    }
+  }
+}' -f owner="<owner>" -f repo="<repo>" -F pr=<number> > /tmp/nit-comments.json
+```
+
+Paginate each connection independently with `-f commentsCursor=...` / `-f reviewsCursor=...`.
+
+Neither connection has `isResolved` or `isOutdated` — these can't be auto-resolved. Most reviews
+have an empty body (approvals and inline-only reviews), so drop those. Tag each item with whether
+the PR author wrote it — author comments are context (pushback, "done", "won't fix"), not new
+feedback:
+
+```bash
+jq '.data.repository.pullRequest as $pr | {
+  comments: [$pr.comments.nodes[] | select(.isMinimized | not) | .byAuthor = (.author.login == $pr.author.login)],
+  reviews:  [$pr.reviews.nodes[]  | select(.body != "")       | .byAuthor = (.author.login == $pr.author.login)]
+}' /tmp/nit-comments.json
+```
+
+`review.commit.oid` is the commit the review was submitted against; compare it to `headRefOid` to
+tell whether the PR has moved on since.
+
 ## Resolve a thread (mutation — requires confirmation)
 
 ```bash

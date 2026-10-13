@@ -1,15 +1,16 @@
 ---
 name: nit
-description: Triage review feedback on a GitHub PR — filters outdated threads, deduplicates repeated comments, groups the rest by code locality, and prints a severity-ranked table. Auto-resolves outdated threads; never posts replies.
+description: Triage review feedback on a GitHub PR — review threads, review bodies, and PR comments. Filters outdated threads, deduplicates repeated comments, groups the rest by code locality, and prints a severity-ranked table. Auto-resolves outdated threads; never posts replies.
 disable-model-invocation: true
 allowed-tools: Bash(gh api graphql *) Bash(gh pr view *) Bash(git remote *) Bash(jq *)
 ---
 
-**Announce at start:** "Running /nit — pulling review threads and triaging feedback for..."
+**Announce at start:** "Running /nit — pulling review threads, review bodies, and PR comments, and triaging feedback for..."
 
 ## What this skill does
 
-- Reads every review thread on a PR (not just top-level comments).
+- Reads every review thread on a PR, plus review summary bodies and top-level PR conversation
+  comments — feedback often lives only in a review body with no inline threads.
 - Drops threads GitHub already marked **outdated** (diff moved past them) into an auto-resolve
   queue and resolves them via the API.
 - Deduplicates near-identical feedback (same nit raised in multiple spots, or restated by
@@ -25,7 +26,7 @@ outside what `/nit` does and point them at the `gh` or `pr` skill instead.
 
 ## Command Execution Policy
 
-**Run freely (read-only):** `gh api graphql` queries (fetching threads), `gh pr view`, `git remote -v`.
+**Run freely (read-only):** `gh api graphql` queries (fetching threads, comments, and reviews), `gh pr view`, `git remote -v`.
 
 **Run freely (mutation, but scoped and reversible):**
 - `gh api graphql` **`resolveReviewThread`** — only ever run against threads GitHub itself has
@@ -42,10 +43,13 @@ issue comment`, or any other command that posts content to the PR.
 - If given just a number, resolve owner/repo from `git remote -v` in the current repo.
 - If given nothing, resolve the PR for the current branch: `gh pr view --json number,url`.
 
-## Phase 2 — Fetch review threads
+## Phase 2 — Fetch feedback
 
-Run the GraphQL query in [references/graphql.md](references/graphql.md) against the resolved
-owner/repo/number. Paginate if `hasNextPage` is true. Parse the JSON response with `jq` (not
+Run **both** fetch queries in [references/graphql.md](references/graphql.md) against the resolved
+owner/repo/number — review threads, and PR conversation comments + review bodies. Skipping the
+second query misses any PR whose feedback was left as a review summary or a top-level comment.
+
+For the review threads query, paginate if `hasNextPage` is true. Parse the JSON response with `jq` (not
 manual text parsing or another language's JSON parser) — e.g. filter to unresolved threads with:
 
 ```bash
@@ -54,6 +58,12 @@ jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == f
 
 Discard threads where `isResolved` is already `true` — nothing to do with those.
 
+For comments and review bodies, drop empty review bodies and minimized comments. Keep the PR
+author's comments, but don't treat them as feedback rows — they're often pushback, a "fixed in
+<sha>", or a "won't fix" on a reviewer's point, and are read in Phase 3. Also skip bot comments
+that carry no review feedback (CI status, coverage reports, deploy previews) — judge by content,
+since some bots do leave real review findings.
+
 ## Phase 3 — Filter, dedupe, group, rank
 
 All of this is analysis, not tool calls:
@@ -61,9 +71,23 @@ All of this is analysis, not tool calls:
 1. **Filter outdated.** Split remaining threads into:
    - `outdated` — `isOutdated: true`. These go in the auto-resolve queue for Phase 4.
    - `active` — `isOutdated: false`. These go in the feedback table.
+
+   Review bodies and PR comments are always `active` — they have no outdated flag. Split any
+   comment or review body that lists several findings (numbered list, headings, bullets) into one
+   item per finding, using the file/symbol it names for locality. If a review's `commit.oid`
+   differs from `headRefOid`, note in its Feedback cell that it predates the latest push (e.g.
+   `(at 820d4cb)`) — it may already be addressed.
+
+   Match each PR-author comment to the reviewer point(s) it responds to (quoted text, a reply
+   that names the finding or its number, or clear topical overlap). Pushback or a "won't fix"
+   doesn't remove the row — note it in the Feedback cell (e.g. `— author disagrees: <gist>`) so
+   it reads as an open discussion rather than a to-do. An author claim that it's already fixed
+   gets `— author says fixed` the same way. Author comments that don't respond to any point
+   (status updates, notes to self) are dropped.
 2. **Deduplicate `active` threads.** Merge threads that raise the same point — same wording,
    same paraphrase, or the same nit repeated at multiple call sites (e.g. "missing null check"
-   flagged on three similar functions). Keep one row per distinct point; record every thread
+   flagged on three similar functions), including a point raised both inline and in a review
+   body or comment. Keep one row per distinct point; record every thread
    it covers so Phase 4/5 can reference them.
 3. **Group by code locality.** Cluster the deduplicated rows by the area of the codebase they
    touch — file path, shared directory, or a named feature/component if several files clearly
@@ -87,8 +111,11 @@ Print one markdown table, sorted `blocking → major → minor → nit → quest
 | blocking | `app/models/foo.rb` | Missing null check before `.bar` call | @alice |
 | nit | `spec/` (×3) | Prefer `let` over instance var in specs | @bob |
 
-Then print how many threads were outdated (going into the auto-resolve queue below) and how many
-were resolved already and skipped.
+Then print how many threads were outdated (going into the auto-resolve queue below), how many
+were resolved already and skipped, and how many review bodies and PR comments contributed rows.
+
+Rows that come from review bodies or PR comments have no file:line, so use the area the text
+names (e.g. `capture.py`); fall back to `(general)` when it names none.
 
 ## Phase 5 — Auto-resolve outdated threads
 
