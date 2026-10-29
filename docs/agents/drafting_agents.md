@@ -25,7 +25,18 @@ agents/
   git-draft-pr.md       # drafts a PR/MR description from branch context
 ```
 
-Each agent is a single `.md` file. No subdirectories, no frontmatter — just the prompt.
+Each agent is a single `.md` file with no subdirectories. It starts with frontmatter that registers it as a named sub-agent, followed by the prompt:
+
+```yaml
+---
+name: git-draft-commit          # matches the filename
+description: Internal subagent for the /commit skill. <what it reads and returns>. Spawned by /commit only; not for direct use.
+tools: Bash                     # tool names only, comma-separated; permission patterns like Bash(make *) are not valid here
+model: haiku                    # optional; omit to inherit the parent's model
+---
+```
+
+Name the parent skill in `description` and say the agent isn't for direct use, so Claude doesn't delegate to it outside that skill.
 
 ---
 
@@ -142,6 +153,7 @@ Key decisions:
 ## Checklist for a new sub-agent
 
 - [ ] File at `agents/<name>.md`
+- [ ] Frontmatter: `name`, `description` naming the parent skill, `tools`, optional `model`
 - [ ] Purpose line: "You are a subagent. Your only job is to … Return … and nothing else."
 - [ ] Steps: explicit shell commands in order
 - [ ] Rules / constraints section if output has style requirements

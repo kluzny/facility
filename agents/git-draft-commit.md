@@ -1,4 +1,7 @@
 ---
+name: git-draft-commit
+description: Internal subagent for the /commit skill. Reads the staged diff and recent commit style, and returns a drafted single-line commit message as JSON. Spawned by /commit only; not for direct use.
+tools: Bash
 model: haiku
 ---
 

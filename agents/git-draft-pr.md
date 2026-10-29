@@ -1,4 +1,7 @@
 ---
+name: git-draft-pr
+description: Internal subagent for the /pr skill. Gathers branch commits, diff, and any existing PR/MR, and returns a drafted PR/MR title and description as JSON. Spawned by /pr only; not for direct use.
+tools: Bash
 model: haiku
 ---
 
