@@ -20,7 +20,7 @@ allowed-tools: Read Grep Glob Write Agent Bash(jq *) Bash(awk *) Bash(cut *) Bas
 
 **Never:**
 - Edit skills, agents, settings, hooks or project files. Proposals are for the user to pick.
-- Write anywhere except the working directory and the optional report copy in step 7.
+- Write anywhere except the working directory and the optional report copy in step 6.
 - Send transcript content to an external service, or quote anything that looks like a credential.
 
 **Requires:** `jq`. The scripts check for it and exit if it's missing.
@@ -30,29 +30,29 @@ allowed-tools: Read Grep Glob Write Agent Bash(jq *) Bash(awk *) Bash(cut *) Bas
 Copy this checklist into your response and tick it off:
 
 ```
-- [ ] 1–2 Extract
-- [ ] 3 Stats
-- [ ] 4 Inventory
-- [ ] 5 Fan-out (skip with --quick)
-- [ ] 6 Verify
-- [ ] 7 Report
-- [ ] 8 Trend (if a previous report exists)
-- [ ] 9 Stop and ask
+- [ ] 1 Extract
+- [ ] 2 Stats
+- [ ] 3 Inventory
+- [ ] 4 Fan-out (skip with --quick)
+- [ ] 5 Verify
+- [ ] 6 Report
+- [ ] 7 Trend (if a previous report exists)
+- [ ] 8 Stop and ask
 ```
 
-### 1–2. Extract
+### 1. Extract
 
 Run `~/.claude/skills/retro/scripts/extract.sh [N] [--project NAME]`, passing the days argument through as given. It creates a fresh `mktemp` working directory and prints its path as the last line. Every later step reads from there, by full path. The file formats are in [references/jq-recipes.md](references/jq-recipes.md).
 
 If it prints `no records matched`, report that along with the filters used, and stop.
 
-### 3. Stats
+### 2. Stats
 
 Run `~/.claude/skills/retro/scripts/inventory.sh <workdir>` first, because it writes `allow.tsv` and `forbidden.tsv`, which stats reads. Then run `~/.claude/skills/retro/scripts/stats.sh <workdir>`. Work from these markdown tables. Don't read the raw JSONL. For a question the tables don't answer, run an ad hoc query from the recipes file.
 
-### 4. Inventory
+### 3. Inventory
 
-The `inventory.sh` output from step 3 lists:
+The `inventory.sh` output from step 2 lists:
 - user skills (with sources) and agents (with models), each with its description;
 - user settings: permissions, deny rules, hooks, plugins, `cleanupPeriodDays`;
 - per-project guidance files, `.claude/` skills, agents and settings;
@@ -60,7 +60,7 @@ The `inventory.sh` output from step 3 lists:
 
 Read individual files only when a finding depends on their content.
 
-### 5. Fan-out
+### 4. Fan-out
 
 Skip this step for `--quick`. Instead, read `<workdir>/sample.tsv` and the per-project `h_<slug>.tsv` files for the top projects.
 
@@ -69,7 +69,7 @@ Otherwise, Glob `<workdir>/chunks/*.tsv`. Each chunk is ≤350KB of history rows
 ```
 Chunk file: <workdir>/chunks/chunk_NN.tsv
 Projects: <slugs in this chunk>
-Inventory: <skill and agent names with one-line descriptions, hook events, from step 4>
+Inventory: <skill and agent names with one-line descriptions, hook events, from step 3>
 ```
 
 Each agent returns:
@@ -86,20 +86,20 @@ Each agent returns:
 
 If an agent's `lines_read` falls well short of the chunk's line count (`wc -l`), note the gap in the report. Merge the results across chunks: sum the counts of matching categories, dedupe candidates by intent, and drop any candidate that duplicates an inventory item, recasting it as a `skill-change` if it adds something.
 
-### 6. Verify
+### 5. Verify
 
 Before a structural claim goes into the report, check it with a direct `Read` or `Grep` of the file in question. Structural claims include things like "a guidance file says X", "a config is wrong", "an agent lacks frontmatter" or "a skill is unused".
 - Check each guidance-rule bypass row against its rule text in `inventory.sh` output. The rule may be scoped, for example to "via Bash tool" or "in production", or the match may be a false positive.
 - For a skill reported as unused, also check the slash-command table, since a skill can run by slash command without a `Skill` tool call.
 - Drop claims you can't check, or mark them **unverified**.
 
-### 7. Report
+### 6. Report
 
 Print the report using [references/report-template.md](references/report-template.md). Give each finding an evidence count and short quotes. State the sample: the history range versus the transcript range, the filters used, and that counts are regex-based and approximate. If `cleanupPeriodDays` is unset or low, point out that transcript-level findings cover only that window.
 
 Save a copy to `<cwd>/tmp/retro-YYYY-MM-DD.md` only if `<cwd>/tmp/` already exists or the user asks.
 
-### 8. Trend
+### 7. Trend
 
 Use Glob to find the latest `<cwd>/tmp/retro-*.md` before today's. If one exists, compare its key counts with this run's:
 - rejections;
@@ -110,7 +110,7 @@ Use Glob to find the latest `<cwd>/tmp/retro-*.md` before today's. If one exists
 
 Say which earlier proposals appear to have landed (a new skill now in use, a bypass count that dropped) and which didn't move.
 
-### 9. Stop
+### 8. Stop
 
 End with **"Which items should I implement?"** Don't implement anything in this skill run.
 
