@@ -3,9 +3,9 @@
 # Extract prompts, tool calls, rejections and subagent models from Claude Code
 # history and transcripts into a fresh working directory, and print its path.
 #
-# Usage: extract.sh [--days N] [--project NAME] [--chunks N]
+# Usage: extract.sh [N | --days N] [--project NAME] [--chunks N]
 #
-#   --days N        only records from the last N days (default: all)
+#   N, --days N     only records from the last N days (default: all)
 #   --project NAME  only projects whose path contains NAME
 #   --chunks N      cap on prompt chunks for fan-out reading (default 4)
 #
@@ -32,7 +32,7 @@ PROJECT=""
 MAX_CHUNKS=4
 
 usage() {
-  echo "Usage: extract.sh [--days N] [--project NAME] [--chunks N]" >&2
+  echo "Usage: extract.sh [N | --days N] [--project NAME] [--chunks N]" >&2
   exit 2
 }
 
@@ -45,7 +45,8 @@ while [ $# -gt 0 ]; do
     --chunks) MAX_CHUNKS="${2:-}"; shift 2 || usage ;;
     --chunks=*) MAX_CHUNKS="${1#--chunks=}"; shift ;;
     -h|--help) usage ;;
-    *) echo "extract.sh: unknown argument '$1' (valid: --days N, --project NAME, --chunks N)" >&2; exit 2 ;;
+    [0-9]*) DAYS="$1"; shift ;;
+    *) echo "extract.sh: unknown argument '$1' (valid: N, --days N, --project NAME, --chunks N)" >&2; exit 2 ;;
   esac
 done
 

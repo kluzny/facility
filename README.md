@@ -124,7 +124,7 @@ Reviews Claude Code's local history (`~/.claude/history.jsonl`) and session tran
 - Verification of structural claims against the actual files before they reach the report.
 - A two-part report: analysis, then lettered proposals (hooks/settings, new skills, skill changes, scripts, guidance) with a recommended order.
 - A trend comparison against the previous saved report in `tmp/`, when one exists.
-- Options: `--days N`, `--project NAME`, `--quick` (no fan-out).
+- Options: `[days]` (e.g. `/retro 30`), `--project NAME`, `--quick` (no fan-out).
 - All processing stays local; transcripts never leave the machine.
 
 ### shortcut

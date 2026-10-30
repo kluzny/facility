@@ -1,7 +1,7 @@
 ---
 name: retro
 description: Review Claude Code session history and transcripts for recurring asks, workflows, skill/subagent usage and friction, and propose skills, scripts, hooks and guidance. Report only; changes nothing.
-argument-hint: "[--days N] [--project NAME] [--quick]"
+argument-hint: "[days] [--project NAME] [--quick]"
 disable-model-invocation: true
 allowed-tools: Read Grep Glob Write Agent Bash(jq *) Bash(awk *) Bash(cut *) Bash(sort *) Bash(uniq *) Bash(head *) Bash(wc *) Bash(~/.claude/skills/retro/scripts/*)
 ---
@@ -10,7 +10,7 @@ allowed-tools: Read Grep Glob Write Agent Bash(jq *) Bash(awk *) Bash(cut *) Bas
 
 ## Arguments
 
-- `--days N`: only the last N days. The default is all history. Transcripts only cover the retention window regardless.
+- `[days]`: a bare number N (or `--days N`) limits the run to the last N days. The default is all history. Transcripts only cover the retention window regardless.
 - `--project NAME`: only projects whose path contains NAME.
 - `--quick`: skip fan-out and work from the stats plus a 200-prompt sample.
 
@@ -42,7 +42,7 @@ Copy this checklist into your response and tick it off:
 
 ### 1–2. Extract
 
-Run `~/.claude/skills/retro/scripts/extract.sh [--days N] [--project NAME]`. It creates a fresh `mktemp` working directory and prints its path as the last line. Every later step reads from there, by full path. The file formats are in [references/jq-recipes.md](references/jq-recipes.md).
+Run `~/.claude/skills/retro/scripts/extract.sh [N] [--project NAME]`, passing the days argument through as given. It creates a fresh `mktemp` working directory and prints its path as the last line. Every later step reads from there, by full path. The file formats are in [references/jq-recipes.md](references/jq-recipes.md).
 
 If it prints `no records matched`, report that along with the filters used, and stop.
 
