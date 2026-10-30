@@ -43,7 +43,14 @@ Each thread's first comment is the original note; later comments are the reply c
 first comment's body as the primary text for grouping/severity, but read the whole chain — a
 later reply sometimes narrows or retracts the original ask.
 
-## Fetch PR conversation comments and review bodies
+## Fetch the PR description, conversation comments and review bodies
+
+This query also returns the PR's `title` and `body` (its description), which Phase 2 reads before
+any feedback:
+
+```bash
+jq -r '.data.repository.pullRequest | "# \(.title)\n\n\(.body)"' /tmp/nit-comments.json
+```
 
 Review threads only cover inline comments. Feedback also lands in top-level PR conversation
 comments (`comments`) and in the summary body submitted with a review (`reviews`) — a reviewer
@@ -54,6 +61,8 @@ gh api graphql -f query='
 query($owner: String!, $repo: String!, $pr: Int!, $commentsCursor: String, $reviewsCursor: String) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
+      title
+      body
       author { login }
       headRefOid
       comments(first: 100, after: $commentsCursor) {
