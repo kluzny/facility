@@ -44,6 +44,7 @@ Skills extend Claude Code with domain-specific knowledge and commands. Each skil
 | [dr_pepper](skills/dr_pepper/) | `/dr_pepper` | Audit documentation and code comments for accuracy, relevance, and necessity |
 | [nit](skills/nit/) | `/nit` | Triage PR review feedback — dedupe, group by locality, rank by severity, auto-resolve outdated threads |
 | [guidance](skills/guidance/) | `/guidance` | Turn user feedback into high-level agent guidance and record it in AGENTS.md, splitting large guidance into docs/agents/ |
+| [retro](skills/retro/) | `/retro` | Mine Claude Code history and transcripts for recurring asks, workflows and friction, and propose skills, scripts, hooks and guidance |
 | [shortcut](skills/shortcut/) | `/shortcut` | Work with Shortcut project management via `shortcut-cli` |
 | [gh](skills/gh/) | `/gh` | Work with GitHub via the `gh` CLI — PRs, issues, Actions, releases |
 | [glab](skills/glab/) | `/glab` | Work with GitLab via the `glab` CLI — MRs, issues, pipelines, releases |
@@ -106,6 +107,25 @@ Takes a user concern or piece of feedback and converts it into standing agent gu
 - Applies a simple size/complexity heuristic to decide inline vs. dedicated doc
 - Creates `AGENTS.md` and/or `docs/agents/` from scratch if they don't exist yet
 - Shows the full drafted content before writing anything, and never writes without explicit confirmation
+
+### retro
+
+Reviews Claude Code's local history (`~/.claude/history.jsonl`) and session transcripts (`~/.claude/projects`) to find what you ask for repeatedly, which workflows recur, how skills and subagents are used, and where things go wrong. It then proposes skills, scripts, hooks/settings and guidance to address what it finds. It reports only: you pick which proposals to implement.
+
+**Prerequisite:** `jq`.
+
+**What it covers:**
+- Deterministic extraction and counts via bundled scripts:
+  - prompts per project, slash commands and repeated prompts;
+  - tool, skill and subagent usage, including requested versus actual subagent models;
+  - Bash command rankings, file edits that bypass Edit/Write, and test output piped through filters;
+  - rejections, interruptions, unused allow rules, and commands a project's guidance says to avoid.
+- Fan-out reading of the full prompt history, one `retro-chunk-reader` subagent per ≤350KB chunk, packed by project.
+- Verification of structural claims against the actual files before they reach the report.
+- A two-part report: analysis, then lettered proposals (hooks/settings, new skills, skill changes, scripts, guidance) with a recommended order.
+- A trend comparison against the previous saved report in `tmp/`, when one exists.
+- Options: `--days N`, `--project NAME`, `--quick` (no fan-out).
+- All processing stays local; transcripts never leave the machine.
 
 ### shortcut
 
@@ -202,6 +222,7 @@ Sub-agents are delegate prompts that skills spawn via the Agent tool to handle h
 | [git-draft-commit](agents/git-draft-commit.md) | `/commit` | Reads staged diff and drafts a commit message |
 | [git-draft-pr](agents/git-draft-pr.md) | `/pr` | Reads branch diff and drafts a PR/MR description |
 | [dr-pepper-audit](agents/dr-pepper-audit.md) | `/dr_pepper` | Reads a diff, commit, branch, file set, or directory and flags low-value or inaccurate comments and docs |
+| [retro-chunk-reader](agents/retro-chunk-reader.md) | `/retro` | Reads one chunk of prompt history in full and returns asks, workflows, friction and candidate improvements |
 
 ## (Un)License
 
