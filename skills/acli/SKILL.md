@@ -31,7 +31,7 @@ It prints Markdown with every populated field, the description, all comments, at
 
 ## Command Execution Policy
 
-**IMPORTANT: Only `acli jira` commands can be executed without explicit user confirmation.**
+Only `acli jira` commands run without explicit user confirmation.
 
 All other commands require explicit user confirmation before execution:
 - `acli admin` - Organization administration
@@ -62,11 +62,6 @@ acli admin auth switch --org myorgname
 ```
 
 ## Security
-
-### Authentication
-- Always use OAuth web-based authentication (`acli jira auth login --web`).
-- Never use API tokens, API keys, or environment variables.
-- Never attempt to authenticate on behalf of the user.
 
 ### Destructive Operations
 The following commands are **destructive or irreversible** — always confirm with the user before executing:
@@ -123,55 +118,6 @@ Four top-level command groups:
 ### Field Management
 - Status names are project-specific. If transition fails, error lists valid statuses.
 - For custom fields, use `--from-json` with `additionalAttributes`. Generate template: `acli jira workitem create --generate-json` (see Common Patterns).
-
-## Common JQL Patterns
-
-Copy these patterns for `acli jira workitem search --jql "..."`:
-
-```bash
-# All open tickets in a project
---jql "project = PROJ AND status != Done"
-
-# Tickets assigned to me
---jql "assignee = currentUser()"
-
-# Bugs created this week
---jql "project = PROJ AND type = Bug AND created >= startOfWeek()"
-
-# Tickets with a specific label
---jql "project = PROJ AND labels = backend"
-
-# Search by summary text (use ~ for contains)
---jql "project = PROJ AND summary ~ \"search term\""
-
-# High priority open items
---jql "project = PROJ AND priority in (High, Highest) AND status != Done"
-
-# Recently updated (last 7 days)
---jql "project = PROJ AND updated >= -7d ORDER BY updated DESC"
-
-# Tickets in current sprint
---jql "project = PROJ AND sprint in openSprints()"
-
-# Unassigned tickets
---jql "project = PROJ AND assignee is EMPTY"
-
-# My tickets that are overdue
---jql "assignee = currentUser() AND due < now() AND status != Done"
-
-# Epics without children
---jql "project = PROJ AND type = Epic AND issueFunction in hasNoSubtasks()"
-```
-
-**Combining conditions**: Use `AND`, `OR`, and parentheses:
-```bash
---jql "project = PROJ AND (priority = High OR labels = urgent) AND assignee = currentUser()"
-```
-
-**Ordering results**: Append `ORDER BY` clause:
-```bash
---jql "project = PROJ AND status = 'In Progress' ORDER BY updated DESC"
-```
 
 ## Common Patterns
 
